@@ -1,0 +1,12 @@
+#!/usr/bin/sh
+if [[ ! $site ]]; then site="https://1337x.wtf"; fi
+
+query=$(echo $1 | sed 's/ /+/g')
+link="$site/search/${query}/1/"
+if [[ $sort == "time" ]]; then link="${site}/sort-search/${query}/time/desc/1/" ;fi 
+if [[ $v ]] ; then echo $link ;fi 
+torrent=$(select item in $(curl -s "$link" | grep -Eo '/torrent/[0-9]{7}/[^"]*') ; do echo "$item"; break ; done)
+
+magnet=$(curl -s "${site}${torrent}" | grep -Po 'magnet:\?xt=urn:btih:[^"]*' | head -n 1)
+echo $magnet
+
